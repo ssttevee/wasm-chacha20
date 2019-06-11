@@ -1,0 +1,18 @@
+{
+    "name": "wasm-chacha20",
+    "main": "index.js",
+    "version": "0.1.0",
+    "scripts": {
+        "install": "npm run build:js",
+        "build": "npm run build:js && npm run build:wasm",
+        "build:js": "tsc --module commonjs --target esnext index.ts",
+        "build:wasm": "bash wasm/build.sh",
+        "wasm2wat": "wasm2wat wasm/monocypher.wasm -o wasm/monocypher.wat",
+        "debug:wasm": "npm run build:wasm && npm run wasm2wat",
+        "example": "node example/hello.js"
+    },
+    "dependencies": {
+        "wasm-common": "github:ssttevee/wasm-common#6011808",
+        "typescript": "^3.5.1"
+    }
+}
