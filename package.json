@@ -12,7 +12,7 @@
         "example": "node example/hello.js"
     },
     "dependencies": {
-        "wasm-common": "github:ssttevee/wasm-common#6011808",
+        "wasm-common": "github:ssttevee/wasm-common#514c7b6",
         "typescript": "^3.5.1"
     }
 }

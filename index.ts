@@ -1,4 +1,4 @@
-import Memory from 'wasm-common/memory';
+import Memory, { CopySource } from 'wasm-common/memory';
 
 export default function(Chacha20Wasm: WebAssembly.Module) {
     const mem = new Memory({ initial: 256, maximum: 256 });
@@ -16,10 +16,12 @@ export default function(Chacha20Wasm: WebAssembly.Module) {
         private _context: number;
         private _freed: boolean;
     
-        public constructor(key: Uint8Array, nonce: Uint8Array) {
-            if (key.length !== 32) {
+        public constructor(key: CopySource, nonce: CopySource) {
+            const keyLength = (key as string).length || (key as BufferSource).byteLength;
+            const nonceLength = (nonce as string).length || (nonce as BufferSource).byteLength;
+            if (keyLength !== 32) {
                 throw new Error('key must be 32 bytes');
-            } else if (nonce.length !== 8 && nonce.length !== 24) {
+            } else if (nonceLength !== 8 && nonceLength !== 24) {
                 throw new Error('nonce must be either 8 or 24 bytes');
             }
 
@@ -28,7 +30,7 @@ export default function(Chacha20Wasm: WebAssembly.Module) {
             const noncePtr = mem.copyIn(nonce);
 
             try {
-                if (nonce.length === 8) {
+                if (nonceLength === 8) {
                     instance.exports._crypto_chacha20_init(this._context, keyPtr, noncePtr);
                 } else {
                     instance.exports._crypto_chacha20_x_init(this._context, keyPtr, noncePtr);
@@ -39,7 +41,7 @@ export default function(Chacha20Wasm: WebAssembly.Module) {
             }
         }
     
-        public encrypt(data: Uint8Array): Uint8Array {
+        public encrypt(data: CopySource): Uint8Array {
             this._assert();
 
             const length = data.length;
